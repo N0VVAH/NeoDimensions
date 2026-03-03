@@ -9,5 +9,7 @@
   "examplemod.configuration.items": "Item List",
   "examplemod.configuration.logDirtBlock": "Log Dirt Block",
   "examplemod.configuration.magicNumberIntroduction": "Magic Number Text",
-  "examplemod.configuration.magicNumber": "Magic Number"
+  "examplemod.configuration.magicNumber": "Magic Number",
+  "death.attack.darkness": "%1$s was consumed by the darkness",
+  "death.attack.darkness.player": "%1$s was consumed by the darkness while fighting %2$s"
 }
