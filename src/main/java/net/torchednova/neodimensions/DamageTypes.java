@@ -11,9 +11,9 @@ public class DamageTypes {
     public static final ResourceKey<DamageType> DARKNESS = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath("neodimensions", "darkness"));
     public static DamageSource Darkness;
 
-    public static DamageSource getDark(Level level)
+    public static void initDark(Level level)
     {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.DARKNESS));
+        Darkness = new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.DARKNESS));
     }
 
 }

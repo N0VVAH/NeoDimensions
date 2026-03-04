@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -82,30 +83,37 @@ public class NeoDimensions {
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
     }
 
+
     @SubscribeEvent
     public void onLevelTick(LevelTickEvent.Pre event)
     {
+
         if (event.getLevel().isClientSide) return;
 
         if (event.getLevel().dimension().location().toString().equals("neodimensions:deeper_dark"))
         {
             for (int i = 0; i < PlayerTrackerController.players.size(); i++)
             {
-                PlayerTrackerController.players.get(i).ticks++;
-                if (PlayerTrackerController.players.get(i).ticks >= Settings.timeBetDamage)
+                PlayerTracker p = PlayerTrackerController.players.get(i);
+
+                p.ticks++;
+                if (p.ticks >= Settings.timeBetDamage)
                 {
-                    if (PlayerTrackerController.players.get(i).player == null)
+                    if (p.player == null)
                     {
                         i--;
-                        PlayerTrackerController.removePlayer(PlayerTrackerController.players.get(i).player);
+                        PlayerTrackerController.removePlayer(p.player);
                         continue;
                     }
-                    PlayerTrackerController.players.get(i).ticks = 0;
-                    PlayerTrackerController.players.get(i).player.hurt(DamageTypes.getDark(event.getLevel()), 2.0f);
+                    if (event.getLevel().getMaxLocalRawBrightness(p.player.blockPosition()) > Settings.mineLightLevel) return;
+                    p.ticks = 0;
+                    p.player.hurt(DamageTypes.Darkness, 2.0f);
                 }
             }
         }
     }
+
+
 
     @SubscribeEvent
     public void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event)
@@ -145,5 +153,13 @@ public class NeoDimensions {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
         PlayerTrackerController.init();
+
+        for (Level l : event.getServer().getAllLevels())
+        {
+            if (l.dimension().location().toString().equals("neodimensions:deeper_dark"))
+            {
+                DamageTypes.initDark(l);
+            }
+        }
     }
 }
