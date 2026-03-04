@@ -14,6 +14,8 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.*;
 import net.torchednova.neodimensions.deeper_dark.PlayerTracker;
 import net.torchednova.neodimensions.deeper_dark.PlayerTrackerController;
+import net.torchednova.neodimensions.itemsblocks.Blocks;
+import net.torchednova.neodimensions.itemsblocks.CreativeTab;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -42,7 +44,8 @@ public class NeoDimensions {
     // Create a Deferred Register to hold Blocks which will all be registered under the "examplemod" namespace
     //public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+
+    public static final MyRegistrate myRegistrate = MyRegistrate.create(MODID).defaultCreativeTab((ResourceKey<CreativeModeTab>)null);
 
     // Creates a new Block with the id "examplemod:example_block", combining the namespace and path
     //public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
@@ -58,8 +61,9 @@ public class NeoDimensions {
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         //BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
-        CREATIVE_MODE_TABS.register(modEventBus);
+        Blocks.register();
+        CreativeTab.register(modEventBus);
+
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
@@ -112,8 +116,6 @@ public class NeoDimensions {
             }
         }
     }
-
-
 
     @SubscribeEvent
     public void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event)
