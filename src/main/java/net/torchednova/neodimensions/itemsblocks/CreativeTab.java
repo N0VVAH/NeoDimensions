@@ -11,8 +11,15 @@ import net.torchednova.neodimensions.NeoDimensions;
 public class CreativeTab {
     public static final DeferredRegister<CreativeModeTab> registerie = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NeoDimensions.MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> mine = registerie.register(NeoDimensions.MODID + "cheese", () -> CreativeModeTab.builder().title(Component.literal("NeoDimensions")).icon(Blocks.badvariable.get("deeper_dark_portal")::asStack)
-            .displayItems((Parameter, output) -> output.accept(Blocks.badvariable.get("deeper_dark_portal").asStack())).build() );
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> mine = registerie.register(
+            NeoDimensions.MODID + "-creativetab", () -> CreativeModeTab.builder()
+                    .title(Component.literal("NeoDimensions"))
+                    .icon(Blocks.neodimensionsBlocks.get("deeper_dark_portal")::asStack)
+                    .displayItems((param, output) -> Blocks.neodimensionsBlocks.forEach((id, block) -> output.accept(block.asStack())))
+                    .build()
+    );
 
-    public static void register(IEventBus event) { registerie.register(event); }
+    public static void register(IEventBus event) {
+        registerie.register(event);
+    }
 }
