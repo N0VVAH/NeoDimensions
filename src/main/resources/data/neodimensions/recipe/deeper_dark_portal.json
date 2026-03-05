@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "X#X",
+    "@#@",
+    "X#X"
+  ],
+  "key": {
+    "X": { "item": "minecraft:iron_pickaxe" },
+    "#": { "item": "minecraft:cobblestone" },
+    "@": { "item": "minecraft:cobbled_deepslate" }
+  },
+  "result": {
+    "id": "neodimensions:deeper_dark_portal",
+    "count": 1
+  }
+}

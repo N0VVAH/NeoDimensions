@@ -1,9 +1,11 @@
 package net.torchednova.neodimensions;
 
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.*;
 import net.torchednova.neodimensions.deeper_dark.PlayerTracker;
@@ -11,6 +13,7 @@ import net.torchednova.neodimensions.deeper_dark.PlayerTrackerController;
 import net.torchednova.neodimensions.itemsblocks.Blocks;
 import net.torchednova.neodimensions.itemsblocks.CreativeTab;
 import org.slf4j.Logger;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import com.mojang.logging.LogUtils;
 
@@ -22,10 +25,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
-import java.awt.*;
 
 @Mod(NeoDimensions.MODID)
 public class NeoDimensions {
@@ -112,10 +113,28 @@ public class NeoDimensions {
     }
 
     @SubscribeEvent
-    public void onBiomeShizz(ServerStartedEvent event)
+    public void onEntityJoin(EntityJoinLevelEvent event)
     {
+        if (event.getLevel().dimension().location().toString().equals("neodimensions:deeper_dark"))
+        {
+            if (event.getEntity() instanceof LivingEntity lv && Settings.mineMobs.contains(lv.getType().getDescriptionId()))
+            {
+                AttributeInstance attInst = lv.getAttribute(Attributes.MAX_HEALTH);
+                if (attInst != null)
+                {
+                    attInst.setBaseValue(attInst.getBaseValue() * Settings.mineMobHealthMul);
+                    lv.setHealth(lv.getMaxHealth());
+                }
 
+                attInst = lv.getAttribute(Attributes.ATTACK_DAMAGE);
+                if (attInst != null)
+                {
+                    attInst.setBaseValue(attInst.getBaseValue() * Settings.mineMobDamMul);
+                }
+            }
+        }
     }
+
 
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
