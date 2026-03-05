@@ -3,6 +3,7 @@ package net.torchednova.neodimensions;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.*;
 import net.torchednova.neodimensions.deeper_dark.PlayerTracker;
@@ -110,6 +111,12 @@ public class NeoDimensions {
         }
     }
 
+    @SubscribeEvent
+    public void onBiomeShizz(ServerStartedEvent event)
+    {
+
+    }
+
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
@@ -117,6 +124,7 @@ public class NeoDimensions {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
         PlayerTrackerController.init();
+
 
         for (Level l : event.getServer().getAllLevels())
         {

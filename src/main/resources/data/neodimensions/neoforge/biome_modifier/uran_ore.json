@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "powah"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "#neodimensions:deeper_dark",
+  "features": [
+    "neodimensions:uran_ore"
+  ],
+  "step": "underground_ores"
+}

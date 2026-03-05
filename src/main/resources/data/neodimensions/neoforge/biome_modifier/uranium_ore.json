@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "crowns"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "#neodimensions:deeper_dark",
+  "features": [
+    "neodimensions:uranium_ore"
+  ],
+  "step": "underground_ores"
+}

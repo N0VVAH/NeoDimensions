@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "#neodimensions:deeper_dark",
+  "features": [
+    "neodimensions:zinc_ore"
+  ],
+  "step": "underground_ores"
+}
