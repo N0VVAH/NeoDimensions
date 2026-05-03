@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,8 +21,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.torchednova.neodimensions.NeoDimensions;
 import net.torchednova.neodimensions.utils.WorldFunctions;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class DeeperDarkPortalBlock extends Block {
 
@@ -33,6 +38,25 @@ public class DeeperDarkPortalBlock extends Block {
     }
 
     @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState stage, @Nullable LivingEntity placer, ItemStack stack)
+    {
+        super.setPlacedBy(level, pos, stage, placer,stack);
+
+
+        if (placer == null) return;
+        if (placer.getServer() == null) return;
+
+        if (targetLevel == null) {
+            targetLevel = placer.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("neodimensions", "deeper_dark")));
+            overworld = placer.getServer().getLevel(Level.OVERWORLD);
+        }
+
+        if (level.dimension() == Level.OVERWORLD) {
+            WorldFunctions.makeSafePoint(targetLevel, pos.getCenter());
+        }
+    }
+
+    @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult)
     {
         if (player.getServer() == null) return InteractionResult.PASS;
@@ -41,7 +65,6 @@ public class DeeperDarkPortalBlock extends Block {
         {
             targetLevel = player.getServer().getLevel(ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("neodimensions", "deeper_dark")));
             overworld = player.getServer().getLevel(Level.OVERWORLD);
-            WorldFunctions.makeSafePoint(targetLevel, pos.getCenter());
         }
 
         if (player.getItemInHand(player.getUsedItemHand()) == ItemStack.EMPTY)
@@ -84,7 +107,7 @@ public class DeeperDarkPortalBlock extends Block {
 
                 if (player instanceof ServerPlayer)
                 {
-                    Component title = Component.literal("This portal only works in the Overworld and Deeper Dark").withStyle(ChatFormatting.RED);
+                    Component title = Component.literal("This portal only works in the Overworld and in the Deeper Dark").withStyle(ChatFormatting.RED);
                     ClientboundSetTitlesAnimationPacket animationPacket = new ClientboundSetTitlesAnimationPacket(10, 70, 20);
 
                     ClientboundSetTitleTextPacket titlePacket = new ClientboundSetTitleTextPacket(title);

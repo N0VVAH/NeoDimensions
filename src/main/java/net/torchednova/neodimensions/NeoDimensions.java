@@ -1,17 +1,29 @@
 package net.torchednova.neodimensions;
 
+import com.google.common.reflect.TypeToken;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.*;
+import net.torchednova.neodimensions.commands.neodim;
 import net.torchednova.neodimensions.deeper_dark.PlayerTracker;
 import net.torchednova.neodimensions.deeper_dark.PlayerTrackerController;
 import net.torchednova.neodimensions.itemsblocks.Blocks;
 import net.torchednova.neodimensions.itemsblocks.CreativeTab;
+import net.torchednova.neodimensions.saving.SaveData;
+import net.torchednova.neodimensions.voiddimension.Parts;
+import net.torchednova.neodimensions.voiddimension.PartsManager;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
@@ -26,6 +38,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+
+import java.util.ArrayList;
 
 
 @Mod(NeoDimensions.MODID)
@@ -53,9 +67,14 @@ public class NeoDimensions {
     }
 
     @SubscribeEvent
+    public void onCommandRegister(RegisterCommandsEvent event)
+    {
+        neodim.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
     public void onLevelTick(LevelTickEvent.Pre event)
     {
-
         if (event.getLevel().isClientSide) return;
 
         if (event.getLevel().dimension().location().toString().equals("neodimensions:deeper_dark"))
@@ -93,6 +112,49 @@ public class NeoDimensions {
             PlayerTrackerController.addPlayer(event.getEntity());
         }
     }
+
+//    @SubscribeEvent
+//    public void onBlockPlace(BlockEvent.EntityPlaceEvent event)
+//    {
+//        if (((Level)event.getLevel()).dimension().location().toString().equals("neodimensions:void"))
+//        {
+//            Player p = (Player) event.getEntity();
+//            if (p == null) return;
+//            if (p.hasPermissions(2)) return;
+//            Parts part = PartsManager.getPart(p);
+//            if (part == null) return;
+//
+//
+//            Vec3 blockPos = event.getPos().getCenter();
+//
+//            if (!((part.pos.x <= blockPos.x && blockPos.x < (long)(part.pos.x + part.size.x)) && (part.pos.z <= blockPos.z && blockPos.z < (long)(part.pos.z + part.size.z))))
+//            {
+//                event.setCanceled(true);
+//            }
+//        }
+//    }
+//
+//
+//    @SubscribeEvent
+//    public void onBlockPlace(BlockEvent.BreakEvent event)
+//    {
+//        if (((Level)event.getLevel()).dimension().location().toString().equals("neodimensions:void"))
+//        {
+//            Player p = event.getPlayer();
+//            if (p == null) return;
+//            if (p.hasPermissions(2)) return;
+//            Parts part = PartsManager.getPart(p);
+//            if (part == null) return;
+//
+//
+//            Vec3 blockPos = event.getPos().getCenter();
+//
+//            if (!((part.pos.x <= blockPos.x && blockPos.x < (long)(part.pos.x + part.size.x)) && (part.pos.z <= blockPos.z && blockPos.z < (long)(part.pos.z + part.size.z))))
+//            {
+//                event.setCanceled(true);
+//            }
+//        }
+//    }
 
     @SubscribeEvent
     public void PlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event)
@@ -142,7 +204,9 @@ public class NeoDimensions {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+        SaveData.init(event.getServer());
         PlayerTrackerController.init();
+        PartsManager.init();
 
 
         for (Level l : event.getServer().getAllLevels())
@@ -153,4 +217,11 @@ public class NeoDimensions {
             }
         }
     }
+
+    @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event)
+    {
+        PartsManager.save();
+    }
+
 }

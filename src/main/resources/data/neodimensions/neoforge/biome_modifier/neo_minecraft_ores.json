@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#neodimensions:deeper_dark",
+  "features": [
+    "neodimensions:neo_diamond_ore",
+    "neodimensions:neo_iron_ore",
+    "neodimensions:neo_redstone_ore",
+    "neodimensions:neo_emerald_ore",
+    "neodimensions:neo_gold_ore"
+  ],
+  "step": "underground_ores"
+}
